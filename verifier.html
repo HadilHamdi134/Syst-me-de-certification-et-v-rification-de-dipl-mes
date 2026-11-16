@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>Vérification de diplôme</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+</head><body>
+<nav><a href="admin.html">Admin</a><a href="verifier.html">Vérification</a></nav>
+<h1>Vérifier un diplôme</h1>
+<div id="drop">Glissez-déposez le PDF ici ou cliquez pour le choisir</div>
+<input id="pdf" type="file" accept="application/pdf" hidden>
+<div id="msg" class="msg"></div>
+
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+const drop = document.getElementById("drop");
+const input = document.getElementById("pdf");
+const zone = document.getElementById("msg");
+
+drop.addEventListener("click", () => input.click());
+input.addEventListener("change", () => input.files[0] && verifier(input.files[0]));
+["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) verifier(f); });
+
+async function verifier(file) {
+  try {
+    afficher(zone, "info", "Calcul du hash et interrogation de la blockchain…");
+    const hash = await hashFichier(file);
+    const { contrat } = await connecterContrat();
+    const d = await contrat.verifierDiplome(hash);
+
+    if (!d.existe) {
+      afficher(zone, "err", "❌ Diplôme non reconnu");
+    } else if (!d.valide) {
+      afficher(zone, "warn", "⚠️ Diplôme révoqué");
+    } else {
+      const date = new Date(Number(d.date) * 1000).toLocaleDateString("fr-FR");
+      afficher(zone, "ok",
+        "✅ <b>Authentique</b><br>Nom : " + d.nom + "<br>Filière : " + d.filiere +
+        "<br>Année : " + d.annee + "<br>Date d'émission : " + date +
+        (d.cid ? '<br>IPFS : <a target="_blank" href="https://gateway.pinata.cloud/ipfs/' + d.cid + '">' + d.cid + "</a>" : ""));
+    }
+  } catch (e) {
+    console.error(e);
+    afficher(zone, "err", "❌ " + messageErreur(e));
+  }
+}
+</script>
+</body></html>
