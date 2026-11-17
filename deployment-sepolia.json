@@ -1,0 +1,9 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "contractName": "CertificationDiplomes",
+  "contractAddress": "0x6df2391384B413C5440665Bb69deF3a8BD6dbc94",
+  "deployer": "0x694083839edE2674EFc8e6a15632d25D9f4e54A5",
+  "transactionHash": "0x78cc25600f408620698607eb84abcd57a050f7532914f6801cd45d90646151a7",
+  "blockNumber": 12150883
+}
