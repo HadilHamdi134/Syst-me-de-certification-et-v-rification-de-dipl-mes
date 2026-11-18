@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test SHA-256 PDF</title>
+</head>
+<body>
+
+    <h2>Tester le hash d'un PDF</h2>
+
+    <input type="file" id="pdf" accept=".pdf">
+
+    <p id="resultat"></p>
+
+    <script type="module">
+        import { hashFichier } from "./js/blockchain.js";
+
+        document.getElementById("pdf").addEventListener("change", async (event) => {
+
+            const file = event.target.files[0];
+            const resultat = document.getElementById("resultat");
+
+            try {
+                resultat.textContent = "Calcul en cours...";
+
+                const hash = await hashFichier(file);
+
+                resultat.textContent = "Hash : " + hash;
+
+                console.log(hash);
+
+            } catch (error) {
+                resultat.textContent = error.message;
+            }
+        });
+    </script>
+
+</body>
+</html>
