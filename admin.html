@@ -1,58 +1,62 @@
 <!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"><title>Admin – Émission</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
-</head><body>
-<nav><a href="admin.html">Admin</a><a href="verifier.html">Vérification</a></nav>
-<h1>Émettre un diplôme</h1>
-<form id="form">
-  <input id="nom" placeholder="Nom" required>
-  <input id="prenom" placeholder="Prénom" required>
-  <input id="filiere" placeholder="Filière" required>
-  <input id="annee" type="number" placeholder="Année" min="1990" max="2100" required>
-  <input id="pdf" type="file" accept="application/pdf" required>
-  <button id="btn" type="submit">Émettre</button>
-</form>
-<div id="msg" class="msg"></div>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration des diplômes</title>
+   <link rel="stylesheet" href="../css/style.css">
+</head>
 
-<script src="config.js"></script>
-<script src="common.js"></script>
-<script src="pinata.js"></script>
-<script>
-const form = document.getElementById("form");
-const btn = document.getElementById("btn");
-const zone = document.getElementById("msg");
+<body>
 
-form.addEventListener("submit", async (ev) => {
-  ev.preventDefault();
-  btn.disabled = true;
-  try {
-    const file = document.getElementById("pdf").files[0];
-    const nomComplet = document.getElementById("prenom").value.trim() + " " + document.getElementById("nom").value.trim();
-    const filiere = document.getElementById("filiere").value.trim();
-    const annee = Number(document.getElementById("annee").value);
+    <main class="container">
 
-    afficher(zone, "info", "Calcul du hash du PDF…");
-    const hash = await hashFichier(file);                                // (1)
+        <p><a href="index.html">← Accueil</a></p>
 
-    // Étape 9 (bonus) : CID IPFS si une clé Pinata est configurée, sinon ""
-    let cid = "";
-    if (PINATA_JWT) { afficher(zone, "info", "Envoi sur IPFS…"); cid = await envoyerSurIPFS(file); }
+        <h1>Administration des diplômes</h1>
 
-    const { contrat } = await connecterContrat();
-    afficher(zone, "info", "Transaction en cours… confirmez dans MetaMask.");
-    const tx = await contrat.emettreDiplome(hash, nomComplet, filiere, annee, cid); // (2)
-    afficher(zone, "info", "Transaction envoyée, attente de confirmation…<br>" + tx.hash);
-    await tx.wait();                                                     // (3)
+        <p>Enregistrer un nouveau diplôme sur la Blockchain</p>
 
-    afficher(zone, "ok", "✅ Diplôme émis avec succès.<br>Hash : " + hash +
-      "<br>Tx : " + tx.hash + (cid ? "<br>CID IPFS : " + cid : ""));      // (4)
-  } catch (e) {
-    console.error(e);
-    afficher(zone, "err", "❌ " + messageErreur(e));
-  } finally {
-    btn.disabled = false;
-  }
-});
-</script>
-</body></html>
+        <button type="button" id="connectBtn">
+            Connecter MetaMask
+        </button>
+
+        <p id="accountStatus" role="status">
+            Portefeuille non connecté
+        </p>
+
+        <hr>
+
+        <form id="adminForm">
+
+            <label for="nom">Nom :</label>
+            <input type="text" id="nom" required>
+
+            <label for="prenom">Prénom :</label>
+            <input type="text" id="prenom" required>
+
+            <label for="filiere">Filière :</label>
+            <input type="text" id="filiere" required>
+
+            <label for="annee">Année :</label>
+            <input type="number" id="annee"
+                   min="1900" max="2100" required>
+
+            <label for="pdf">Diplôme PDF :</label>
+            <input type="file" id="pdf"
+                   accept=".pdf,application/pdf" required>
+
+            <button type="submit" id="emitBtn">
+                Émettre le diplôme
+            </button>
+
+        </form>
+
+        <p id="status" role="status"></p>
+
+    </main>
+
+    <script type="module" src="../js/admin.js"></script>
+
+</body>
+</html>
