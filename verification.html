@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification des diplômes</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <p><a href="index.html">← Accueil</a></p>
+
+        <h1>Vérification d'un diplôme</h1>
+
+        <p>
+            Sélectionnez ou déposez votre diplôme PDF
+            pour vérifier son authenticité.
+        </p>
+
+        <div id="dropZone"
+             style="border: 2px dashed #2563eb;
+                    padding: 35px;
+                    text-align: center;
+                    border-radius: 10px;">
+
+            <p>Glissez-déposez votre PDF ici</p>
+
+            <input type="file"
+                   id="pdf"
+                   accept=".pdf,application/pdf"
+                   hidden>
+
+            <button type="button" id="chooseBtn">
+                Choisir un PDF
+            </button>
+
+        </div>
+
+        <p id="status" role="status" aria-live="polite"></p>
+
+        <section id="resultat"></section>
+
+    </main>
+
+    <script type="module" src="../js/verification.js"></script>
+
+</body>
+</html>
